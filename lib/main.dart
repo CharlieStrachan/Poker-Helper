@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
-import 'package:namer_app/game.dart';
+import 'package:poker_helper/game.dart';
 
 void main() {
   runApp(MaterialApp(home: MyApp()));
