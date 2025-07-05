@@ -1,5 +1,5 @@
-name: namer_app
-description: "A new Flutter project."
+name: poker_helper
+description: "A simple helper for small blind/big blind tracking in poker games."
 publish_to: 'none'
 version: 0.1.0
 
