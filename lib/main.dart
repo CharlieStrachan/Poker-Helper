@@ -1,69 +1,74 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
-class GamePage extends StatefulWidget {
-  final int time;
-  final int smallBlind;
-  final int bigBlind;
-  const GamePage({super.key, required this.time, required this.smallBlind, required this.bigBlind});
+import 'package:poker_helper/game.dart';
 
-  @override
-  State<GamePage> createState() => _GamePageState();
+void main() {
+  runApp(MaterialApp(home: MyApp()));
 }
 
-class _GamePageState extends State<GamePage> {
-  late final Timer timer;
-
-  late int smallBlind = widget.smallBlind;
-  late int bigBlind = widget.bigBlind;
-
-  late int minutes = widget.time -1;
-  int seconds = 59;
-
-  @override
-  void initState() {  
-    super.initState();  
-    startTimer();
-  }
-
-  @override
-  void dispose() {
-    timer.cancel();
-    super.dispose();
-  }
-
+class MyApp extends StatelessWidget {
+  int time = 15;
+  int smallBlind = 25;
+  int bigBlind = 50;
+  final TextEditingController _controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("$minutes:${seconds < 10? "0$seconds" : seconds}", style: TextStyle(fontSize: 50)),
-            Text("Small Blind: $smallBlind", style: TextStyle(fontSize: 20)),
-            Text("Big Blind $bigBlind", style: TextStyle(fontSize: 20)),
-          ],
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: TextEditingController(text: time.toString()),
+                decoration: InputDecoration(
+                  labelText: 'Time between blinds (minutes)',
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  time = int.tryParse(value) ?? 0;
+                },
+              ),
+              TextField(
+                controller: TextEditingController(text: smallBlind.toString()),
+                decoration: InputDecoration(
+                  labelText: 'Small Blind',
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  smallBlind = int.tryParse(value) ?? 0;
+                },
+              ),
+              TextField(
+                controller: TextEditingController(text: bigBlind.toString()),
+                decoration: InputDecoration(
+                  labelText: 'Big Blind',
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  bigBlind = int.tryParse(value) ?? 0;
+                },
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (time > 0 && smallBlind > 0 && bigBlind > smallBlind) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => GamePage(time: time, smallBlind: smallBlind, bigBlind: bigBlind),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text("Start")
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  void startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() {
-        --seconds;
-        if (seconds < 0 && minutes > 0) {
-          --minutes;
-          seconds = 59;
-        }
-        if (seconds == 0 && minutes == 0) {
-          smallBlind *= 2;
-          bigBlind *= 2;
-          timer.cancel();
-          startTimer();
-        }
-      });
-    });
   }
 }
